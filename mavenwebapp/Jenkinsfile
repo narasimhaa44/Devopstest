@@ -1,51 +1,55 @@
 pipeline {
-	agent any  
-	environment {
-		LANG='en_US.UTF-8'
-		LC_ALL='en_US.UTF-8'
-	}
-	
-	tools {
-		maven  'Maven'
-	}
-	stages {
-		stage('Check-out') {
-			steps {
-				 git branch:'main' , url: 'https://github.com/narasimhaa44/Devopstest.git'
-			}	
-		}
-		stage('Build War') {
-			steps {
-				dir('mavenwebapp') {
-				sh 'mvn clean package'
-				}
-			}
-		}
-		
-		stage('Archive') {
-			steps {
-				dir('mavenwebapp') {
-				archiveArtifacts artifacts:'target/*.war fingerprint=true'
-				}
-			}
-		}
-		stage('Run-Applciation') {
-			steps {
-				dir('mavenwebapp') {
-				sh 'mvn clean package'
-				sh 'ansible-playbook playbook.yml -i hosts.ini'
-				}
-				}
-		}
-	}
-		post {
-			success {
-				echo 'Execution succesful'
-			}
-			failure {
-				echo 'execution stopped'
-			}
-		}
-	}
-		
-			
+    agent any
+    
+    environment {
+    	LANG='en_US.UTF-8'
+    	LC_ALL='en_US.UTF-8'
+    }
+
+    tools {
+        maven 'Maven'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/narasimhaa44/Devopstest.git'
+            }
+        }
+
+        stage('Build WAR') {
+            steps {
+                dir('mavansibpipe'){
+                    sh 'mvn clean package'
+                }
+            }
+        }
+        
+        stage('Archive') {
+        	steps {
+                dir('mavansibpipe'){
+        		archiveArtifacts artifacts: 'target/*.war , fingerprint:true'
+                }
+        	}
+        }
+        stage('Deploy to Tomcat') {
+            steps {
+                dir('mavansibpipe'){
+               sh 'mvn clean package'
+               sh 'ansible-playbook playbook.yml -i hosts.ini'
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo '✅ Deployment to Tomcat successful!'
+        }
+        failure {
+            echo '❌ Deployment failed!'
+        }
+    }
+}
