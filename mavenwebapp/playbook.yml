@@ -7,7 +7,7 @@
 
     - name: Copy WAR file to Tomcat
       copy:
-        src: "target/mavenwebapp.war"
+        src: "/var/snap/jenkins/5022/workspace/mavenwebapppipe/target/mavenwebapp.war"
         dest: "/opt/tomcat/webapps/mavenwebapp.war"
         remote_src: no
 
