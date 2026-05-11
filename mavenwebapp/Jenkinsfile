@@ -16,19 +16,25 @@ pipeline {
 		}
 		stage('Build War') {
 			steps {
+				dir('mavenwebapp') {
 				sh 'mvn clean package'
+				}
 			}
 		}
 		
 		stage('Archive') {
 			steps {
+				dir('mavenwebapp') {
 				archiveArtifacts artifacts:'target/*.war fingerprint=true'
+				}
 			}
 		}
 		stage('Run-Applciation') {
 			steps {
+				dir('mavenwebapp') {
 				sh 'mvn clean package'
 				sh 'ansible-playbook playbook.yml -i hosts.ini'
+				}
 				}
 		}
 		post {
