@@ -20,7 +20,7 @@ pipeline {
 
         stage('Build WAR') {
             steps {
-                dir('mavansibpipe'){
+                dir('mavenwebapp'){
                     sh 'mvn clean package'
                 }
             }
@@ -28,14 +28,14 @@ pipeline {
         
         stage('Archive') {
         	steps {
-                dir('mavansibpipe'){
+                dir('mavenwebapp'){
         		archiveArtifacts artifacts: 'target/*.war , fingerprint:true'
                 }
         	}
         }
         stage('Deploy to Tomcat') {
             steps {
-                dir('mavansibpipe'){
+                dir('mavenwebapp'){
                sh 'mvn clean package'
                sh 'ansible-playbook playbook.yml -i hosts.ini'
                 }
@@ -46,10 +46,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Deployment to Tomcat successful!'
+            echo 'Deployment to Tomcat successful!'
         }
         failure {
-            echo '❌ Deployment failed!'
+            echo 'Deployment failed!'
         }
     }
 }
