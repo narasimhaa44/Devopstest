@@ -1,0 +1,44 @@
+pipeline {
+	agent any  
+	environment {
+		LANG='en_US.UTF-8'
+		LC_ALL='en_US.UTF-8'
+	}
+	
+	tools {
+		maven  'Maven'
+	}
+	stages {
+		stage('Check-out') {
+			steps {
+				 git branch:'main' , url: 'https://github.com/narasimhaa44/mavenwebapp.git'
+			}	
+		}
+		stage('Build War') {
+			steps {
+				sh 'mvn clean package'
+			}
+		}
+		
+		stage('Archive') {
+			steps {
+				archiveArtifacts artifacts:'target/*.war fingerprint=true'
+			}
+		}
+		stage('Run-Applciation') {
+			steps {
+				sh 'mvn clean package'
+				sh 'ansible-playbook playbook.yml -i hosts.ini'
+				}
+		}
+		post {
+			success {
+				echo 'Execution succesful'
+			}
+			failure {
+				echo 'execution stopped'
+			}
+		}
+	}
+		
+			

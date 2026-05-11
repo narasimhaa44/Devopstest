@@ -1,0 +1,16 @@
+---
+   -name: Executing the maven webapp usign tomacat
+    hosts: web
+    become: yes
+	 
+   -tasks:
+	 -name: copy WAR file to the tomcat webapps
+	  copy:
+	    src: 'target/mavenwebapp.jar'
+	    des: '/opt/tomcat/webapps/mavenwebapp.jar'
+	    remote_src: no
+	 	
+	 -name: Restart the tomcat
+	 shell: |
+	   /opt/tomcat/bin/shutdown.sh || true
+	   /opt/tomcat/bin/startup.sh
